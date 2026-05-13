@@ -25,6 +25,8 @@ class RoleAndPermissionSeeder extends Seeder
             'role-list', 'role-create', 'role-edit', 'role-delete',
             // Permission Permissions
             'permission-list', 'permission-create', 'permission-edit', 'permission-delete',
+            // Settings Permission
+            'manage-settings',
         ];
 
         // 3. Create Permissions

@@ -19,12 +19,12 @@
         <div class="action-stack d-flex gap-2 mt-3 mt-lg-0">
             <form action="{{ route('roles.index') }}" method="GET" id="search-form" class="search-capsule d-none d-md-flex align-items-center">
                 <i class="fa-solid fa-magnifying-glass ms-3 text-muted"></i>
+                {{-- UX FIX: Removed oninput debounce --}}
                 <input type="text" 
                        name="search" 
                        value="{{ request('search') }}" 
-                       placeholder="Quick find roles..." 
+                       placeholder="Quick find roles... (Press Enter)" 
                        class="border-0 bg-transparent shadow-none form-control"
-                       oninput="debounceSearch()"
                        autocomplete="off">
             </form>
             
@@ -154,22 +154,11 @@
     </div>
 </div>
 
-{{-- Scripts & Styles --}}
 <script>
-    let timeout = null;
-    function debounceSearch() {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            document.getElementById('search-form').submit();
-        }, 700);
-    }
-
     function handleDelete(id) {
         if(confirm('CRITICAL: Deleting a system role may affect all users assigned to it. Proceed?')) {
             document.getElementById('delete-' + id).submit();
         }
     }
 </script>
-
-
 @endsection

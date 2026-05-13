@@ -23,12 +23,12 @@ class PermissionService
     public function createPermission(array $data): Permission
     {
         $permission = Permission::create([
-            'name' => $data['name'],
+            'name'        => $data['name'],
             'description' => $data['description'] ?? null,
-            'guard_name' => 'web'
+            'guard_name'  => 'web'
         ]);
 
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY
         activity()
             ->useLog('permission-management')
             ->performedOn($permission)
@@ -41,11 +41,11 @@ class PermissionService
     public function updatePermission(Permission $permission, array $data): Permission
     {
         $permission->update([
-            'name' => $data['name'],
+            'name'        => $data['name'],
             'description' => $data['description'] ?? null,
         ]);
 
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY
         activity()
             ->useLog('permission-management')
             ->performedOn($permission)
@@ -57,7 +57,7 @@ class PermissionService
 
     public function deletePermission(Permission $permission): void
     {
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY
         activity()
             ->useLog('permission-management')
             ->performedOn($permission)

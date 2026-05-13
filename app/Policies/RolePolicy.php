@@ -7,28 +7,44 @@ use App\Models\User;
 
 class RolePolicy
 {
+    /**
+     * Determine whether the user can view the roles list.
+     */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('role-list');
+        // Ensures only admins/authorized users can view available roles.
+        return $user->hasPermissionTo('role-list');
     }
 
+    /**
+     * Determine whether the user can view a specific role.
+     */
     public function view(User $user, Role $role): bool
     {
-        return $user->checkPermissionTo('role-list');
+        return $user->hasPermissionTo('role-list');
     }
 
+    /**
+     * Determine whether the user can create new roles.
+     */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('role-create');
+        return $user->hasPermissionTo('role-create');
     }
 
+    /**
+     * Determine whether the user can update existing roles.
+     */
     public function update(User $user, Role $role): bool
     {
-        return $user->checkPermissionTo('role-edit');
+        return $user->hasPermissionTo('role-edit');
     }
 
+    /**
+     * Determine whether the user can delete roles.
+     */
     public function delete(User $user, Role $role): bool
     {
-        return $user->checkPermissionTo('role-delete');
+        return $user->hasPermissionTo('role-delete');
     }
 }

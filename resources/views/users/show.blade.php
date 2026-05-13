@@ -26,14 +26,14 @@
         <div class="d-flex gap-2">
             {{-- Policy Check: View Any User (Directory) --}}
             @can('viewAny', App\Models\User::class)
-                <a href="{{ route('users.index') }}" class="btn btn-light rounded-pill shadow-sm border text-muted px-4">
+                <a href="{{ route('users.index') }}" class="btn btn-light rounded-pill shadow-sm border text-muted px-4 fw-bold">
                     <i class="fa-solid fa-arrow-left me-2"></i>Directory
                 </a>
             @endcan
 
             {{-- Policy Check: Update User --}}
             @can('update', $user)
-                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-premium rounded-pill shadow-sm px-4">
+                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-premium rounded-pill shadow-sm px-4 fw-bold">
                     <i class="fa-solid fa-pen-to-square me-2"></i>Update Info
                 </a>
             @endcan
@@ -54,6 +54,7 @@
                 </div>
             </div>
         </div>
+        
         {{-- Card 2: Verification --}}
         <div class="col-md-3">
             <div class="card p-3 h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
@@ -68,6 +69,7 @@
                 </div>
             </div>
         </div>
+        
         {{-- Card 3: Permissions --}}
         <div class="col-md-3">
             <div class="card p-3 h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
@@ -80,6 +82,7 @@
                 </div>
             </div>
         </div>
+        
         {{-- Card 4: Roles --}}
         <div class="col-md-3">
             <div class="card p-3 h-100 border-0 shadow-sm bg-primary animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
@@ -100,19 +103,23 @@
             <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInLeft">
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
+                        
                         <div class="position-relative d-inline-block mb-3">
                             @if ($user->avatar)
                                 <img src="{{ asset('storage/' . $user->avatar) }}"
                                     class="rounded-circle shadow-sm border p-1"
-                                    style="width: 130px; height: 130px; object-fit: cover;">
+                                    style="width: 130px; height: 130px; object-fit: cover;" alt="Avatar">
                             @else
-                                <div class="avatar-placeholder bg-soft-primary text-primary fw-bold rounded-circle shadow-sm border p-1 mx-auto d-flex align-items-center justify-content-center" 
-                                     style="width: 130px; height: 130px; font-size: 3rem;">
+                                {{-- BRAND FIX: Using Deep Blue and Vivid Orange for consistency --}}
+                                <div class="fw-bold rounded-circle shadow-sm border p-1 mx-auto d-flex align-items-center justify-content-center" 
+                                     style="width: 130px; height: 130px; font-size: 3.5rem; background-color: #214497; color: #FFA500;">
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
                             @endif
-                            <div class="online-status {{ $user->status ? 'status-active' : 'status-inactive' }}" 
-                                 style="width: 24px; height: 24px; border-width: 4px;"></div>
+                            
+                            {{-- UI FIX: Standardized Bootstrap utility classes for perfect dot positioning --}}
+                            <span class="position-absolute bottom-0 end-0 mb-1 me-1 p-2 border border-3 border-white rounded-circle {{ $user->status ? 'bg-success' : 'bg-secondary' }}" 
+                                  title="{{ $user->status ? 'Online' : 'Offline' }}"></span>
                         </div>
                         
                         <h5 class="fw-bold mb-1 text-dark">{{ $user->name }}</h5>
@@ -139,22 +146,31 @@
                     </div>
 
                     <h6 class="fw-bold small mb-3 text-uppercase text-muted tracking-widest">Contact Information</h6>
+                    
                     <div class="mb-3 d-flex align-items-center gap-3">
-                        <div class="icon-box bg-light rounded-circle text-muted" style="width:35px; height:35px;"><i class="fa-solid fa-envelope small"></i></div>
+                        <div class="icon-box bg-light rounded-circle text-muted d-flex justify-content-center align-items-center" style="width:35px; height:35px;">
+                            <i class="fa-solid fa-envelope small"></i>
+                        </div>
                         <div>
                             <label class="text-muted d-block x-small fw-bold text-uppercase">Email Address</label>
                             <span class="text-dark fw-bold small">{{ $user->email }}</span>
                         </div>
                     </div>
+                    
                     <div class="mb-3 d-flex align-items-center gap-3">
-                        <div class="icon-box bg-light rounded-circle text-muted" style="width:35px; height:35px;"><i class="fa-solid fa-phone small"></i></div>
+                        <div class="icon-box bg-light rounded-circle text-muted d-flex justify-content-center align-items-center" style="width:35px; height:35px;">
+                            <i class="fa-solid fa-phone small"></i>
+                        </div>
                         <div>
                             <label class="text-muted d-block x-small fw-bold text-uppercase">Phone Number</label>
                             <span class="text-dark fw-bold small">{{ $user->phone ?? 'Not Provided' }}</span>
                         </div>
                     </div>
+                    
                     <div class="d-flex align-items-center gap-3">
-                        <div class="icon-box bg-light rounded-circle text-muted" style="width:35px; height:35px;"><i class="fa-solid fa-location-dot small"></i></div>
+                        <div class="icon-box bg-light rounded-circle text-muted d-flex justify-content-center align-items-center" style="width:35px; height:35px;">
+                            <i class="fa-solid fa-location-dot small"></i>
+                        </div>
                         <div>
                             <label class="text-muted d-block x-small fw-bold text-uppercase">Mailing Address</label>
                             <span class="text-dark fw-bold small">{{ $user->address ?? 'Not Set' }}</span>
@@ -216,16 +232,16 @@
                 <div class="card-body pt-0 px-4 pb-4">
                     <div class="premium-grid rounded-3 overflow-hidden border">
                         <div class="grid-header py-2" style="grid-template-columns: 2fr 1fr 1fr; background: #fcfcfd;">
-                            <div class="ps-3">PROJECT NAME</div>
-                            <div>ACCESS</div>
-                            <div class="pe-3">PROGRESS</div>
+                            <div class="ps-3 fw-bold small text-muted">PROJECT NAME</div>
+                            <div class="fw-bold small text-muted">ACCESS</div>
+                            <div class="pe-3 fw-bold small text-muted">PROGRESS</div>
                         </div>
                         <div class="grid-body">
                             <div class="grid-row py-3" style="grid-template-columns: 2fr 1fr 1fr; border-bottom: none;">
-                                <div class="ps-3 fw-bold text-dark small">User Management System</div>
-                                <div><span class="badge bg-soft-primary text-primary x-small">Full Access</span></div>
-                                <div class="pe-3">
-                                    <div class="progress rounded-pill" style="height: 6px;">
+                                <div class="ps-3 fw-bold text-dark small d-flex align-items-center">User Management System</div>
+                                <div class="d-flex align-items-center"><span class="badge bg-soft-primary text-primary x-small">Full Access</span></div>
+                                <div class="pe-3 d-flex align-items-center">
+                                    <div class="progress rounded-pill w-100" style="height: 6px;">
                                         <div class="progress-bar bg-primary" style="width: 100%"></div>
                                     </div>
                                 </div>
@@ -242,8 +258,9 @@
                 </div>
                 <div class="card-body pt-0 px-4 pb-4">
                     <div class="d-flex flex-column gap-3">
+                        
                         <div class="d-flex align-items-start p-3 rounded-4 border border-dashed bg-light bg-opacity-50">
-                            <div class="bg-soft-primary text-primary icon-box rounded-circle me-3">
+                            <div class="bg-soft-primary text-primary icon-box rounded-circle me-3 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                                 <i class="fa-solid fa-circle-info small"></i>
                             </div>
                             <div>
@@ -254,7 +271,7 @@
                         
                         @if($user->roles->isNotEmpty())
                         <div class="d-flex align-items-start p-3 rounded-4 border border-dashed bg-light bg-opacity-50">
-                            <div class="bg-soft-success text-success icon-box rounded-circle me-3">
+                            <div class="bg-soft-success text-success icon-box rounded-circle me-3 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                                 <i class="fa-solid fa-shield-halved small"></i>
                             </div>
                             <div>
@@ -263,6 +280,7 @@
                             </div>
                         </div>
                         @endif
+                        
                     </div>
                 </div>
             </div>

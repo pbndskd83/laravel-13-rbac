@@ -46,8 +46,11 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'status' => 'boolean', // Ensures 1/0 from DB becomes true/false in PHP
+            'password'          => 'hashed',
+            
+            // TYPE SAFETY: Casts the tinyint/integer from the database into a strict boolean.
+            // This ensures UI toggles (like Alpine.js or Vue) work seamlessly with true/false.
+            'status'            => 'boolean', 
         ];
     }
 

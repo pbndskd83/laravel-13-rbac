@@ -19,9 +19,13 @@ class UpdateProfileRequest extends FormRequest
         return [
             'name'    => ['required', 'string', 'max:255'],
             'email'   => ['required', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
+            
+            // Ensure phone and address pass validation
             'phone'   => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:255'],
-            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
+            
+            // Standardized avatar validation
+            'avatar'  => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
         ];
     }
 }

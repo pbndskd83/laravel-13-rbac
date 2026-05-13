@@ -34,17 +34,17 @@
         @endif
 
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="card-header border-0 py-4 px-4">
+            <div class="card-header bg-white border-bottom py-4 px-4">
                 <h5 class="fw-bold mb-0">Identity & Purpose</h5>
                 <p class="text-muted small mb-0">Define the security designation and operational scope for this system node.</p>
             </div>
 
-            <div class="card-body p-4 pt-0">
+            <div class="card-body p-4 pt-4">
                 <div class="row g-4">
                     
                     {{-- Role Name --}}
                     <div class="col-md-12 form-group mb-0">
-                        <label class="form-label text-uppercase tracking-widest fw-bold small">Role Designation</label>
+                        <label class="form-label text-uppercase tracking-widest fw-bold small text-dark">Role Designation <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted">
                                 <i class="fa-solid fa-id-badge"></i>
@@ -53,21 +53,27 @@
                                 value="{{ old('name', $role->name ?? '') }}" 
                                 class="form-control pro-input border-start-0 @error('name') is-invalid @enderror" 
                                 placeholder="e.g. Senior Moderator" required>
+                            
+                            {{-- UI FIX: Standardized Validation Feedback --}}
+                            @error('name')
+                                <div class="invalid-feedback fw-bold small mt-1 d-block">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                        @error('name')
-                            <div class="text-danger x-small fw-bold mt-2"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}</div>
-                        @enderror
                     </div>
 
                     {{-- Role Description --}}
                     <div class="col-md-12 form-group mb-0">
-                        <label class="form-label text-uppercase tracking-widest fw-bold small">Operational Description</label>
+                        <label class="form-label text-uppercase tracking-widest fw-bold small text-dark">Operational Description</label>
                         <textarea name="description" rows="3" 
                             class="form-control pro-input @error('description') is-invalid @enderror" 
                             placeholder="Explain the security scope and purpose of this role...">{{ old('description', $role->description ?? '') }}</textarea>
                         
                         @error('description')
-                            <div class="text-danger x-small fw-bold mt-2"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}</div>
+                            <div class="invalid-feedback fw-bold small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                            </div>
                         @enderror
                         
                         <div class="mt-2 text-muted x-small d-flex align-items-center">
@@ -86,8 +92,8 @@
                                 <h5 class="fw-bold mb-0">Security Authorization Matrix</h5>
                                 <p class="text-muted small mb-0">Select the specific actions this role is authorized to perform.</p>
                             </div>
-                            <button type="button" class="btn btn-sm btn-soft-primary rounded-pill px-4" onclick="toggleAllPermissions()">
-                                <i class="fa-solid fa-arrows-rotate me-1"></i> <span class="fw-bold">Toggle All</span>
+                            <button type="button" class="btn btn-sm btn-soft-primary rounded-pill px-4 fw-bold" onclick="toggleAllPermissions()">
+                                <i class="fa-solid fa-arrows-rotate me-1"></i> Toggle All
                             </button>
                         </div>
 
@@ -127,8 +133,8 @@
                         </div>
                         
                         @error('permission')
-                            <div class="alert bg-soft-danger text-danger border-0 mt-4 d-flex align-items-center rounded-4">
-                                <i class="fa-solid fa-triangle-exclamation me-2 fs-5"></i> 
+                            <div class="alert bg-soft-danger text-danger border-0 mt-4 d-flex align-items-center rounded-4 p-3">
+                                <i class="fa-solid fa-triangle-exclamation me-3 fs-5"></i> 
                                 <span class="fw-bold small">{{ $message }}</span>
                             </div>
                         @enderror
@@ -139,9 +145,9 @@
 
         {{-- Submit Button --}}
         <div class="mt-4 text-end">
-            <button type="submit" class="btn btn-premium rounded-pill px-5 py-3 shadow-sm">
+            <button type="submit" class="btn btn-premium rounded-pill px-5 py-3 shadow-sm fw-bold">
                 <i class="fa-solid fa-shield-check me-2"></i> 
-                <span class="fw-bold">{{ isset($role) ? 'Authorize Changes' : 'Initialize Role' }}</span>
+                {{ isset($role) ? 'Authorize Changes' : 'Initialize Role' }}
             </button>
         </div>
     </form>
@@ -156,18 +162,19 @@
         const anyUnchecked = Array.from(checkboxes).some(c => !c.checked);
         checkboxes.forEach(c => {
             c.checked = anyUnchecked;
-            // Trigger visual change for any switch wrappers if necessary
+            // Trigger visual change for any custom switch wrappers if necessary
         });
     }
 
     /**
-     * Optional: Hover effects for labels linked to switches
+     * Hover/Click effects for labels linked to switches
      */
     document.addEventListener("DOMContentLoaded", function() {
         const cards = document.querySelectorAll('.permission-card');
         cards.forEach(card => {
             card.addEventListener('click', function(e) {
-                if (e.target.tagName !== 'INPUT') {
+                // Prevent double-toggling if the user clicks directly on the checkbox/slider
+                if (e.target.tagName !== 'INPUT' && !e.target.classList.contains('switch-slider')) {
                     const input = this.querySelector('input');
                     input.checked = !input.checked;
                 }

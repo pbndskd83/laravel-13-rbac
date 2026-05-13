@@ -15,6 +15,9 @@ class UserService
     public function getPaginatedUsers(?string $search, int $perPage = 10): LengthAwarePaginator
     {
         return User::query()
+            // PERFORMANCE FIX: Eager-load the 'roles' relationship to prevent the N+1 
+            // query problem when looping through users on the index page.
+            ->with('roles')
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%{$search}%")
@@ -43,7 +46,7 @@ class UserService
             $user->assignRole($data['roles']);
         }
 
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY: Standardized audit trail tracking
         activity()
             ->useLog('user-management')
             ->performedOn($user)
@@ -76,7 +79,7 @@ class UserService
             $user->syncRoles($data['roles']);
         }
 
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY: Standardized audit trail tracking
         activity()
             ->useLog('user-management')
             ->performedOn($user)
@@ -92,11 +95,12 @@ class UserService
 
     public function deleteUser(User $user): void
     {
+        // CONSISTENCY FIX: Protect against deleting the core Super Admin dynamically
         if ($user->hasRole(config('rbac.super_admin'))) {
             throw new \Exception('Cannot delete the Super Admin account.');
         }
 
-        // ✅ LOG ACTIVITY (Before deletion so we still have the model)
+        // LOG ACTIVITY (Before deletion so we still have the model binding)
         activity()
             ->useLog('user-management')
             ->performedOn($user)

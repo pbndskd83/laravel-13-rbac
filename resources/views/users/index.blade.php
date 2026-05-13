@@ -20,17 +20,17 @@
                 <form action="{{ route('users.index') }}" method="GET" id="search-form"
                     class="search-capsule d-none d-md-flex align-items-center">
                     <i class="fa-solid fa-magnifying-glass ms-3 text-muted"></i>
+                    {{-- UX FIX: Removed oninput debounce to prevent focus loss mid-typing --}}
                     <input type="text" name="search" value="{{ request('search') }}"
-                        class="form-control border-0 bg-transparent shadow-none" placeholder="Quick find member..."
-                        oninput="debounceSearch()" autocomplete="off">
+                        class="form-control border-0 bg-transparent shadow-none" placeholder="Quick find member... (Press Enter)" autocomplete="off">
                 </form>
 
                 {{-- POLICY CHECK: Create User --}}
-@can('create', App\Models\User::class)
-    <a class="btn btn-premium rounded-pill shadow-sm px-4" href="{{ route('users.create') }}">
-        <i class="fa-solid fa-plus me-2"></i>New User
-    </a>
-@endcan
+                @can('create', App\Models\User::class)
+                    <a class="btn btn-premium rounded-pill shadow-sm px-4" href="{{ route('users.create') }}">
+                        <i class="fa-solid fa-plus me-2"></i>New User
+                    </a>
+                @endcan
             </div>
         </div>
 
@@ -57,8 +57,9 @@
                                             class="rounded-circle border"
                                             style="width: 45px; height: 45px; object-fit: cover;">
                                     @else
-                                        <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold rounded-circle"
-                                            style="width: 45px; height: 45px; font-size: 1.2rem;">
+                                        {{-- UI FIX: Updated to use Binayak Solution brand colors (Deep Blue & Vivid Orange) --}}
+                                        <div class="d-flex align-items-center justify-content-center fw-bold rounded-circle shadow-sm"
+                                            style="width: 45px; height: 45px; font-size: 1.2rem; background-color: #214497; color: #FFA500;">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </div>
                                     @endif
@@ -153,18 +154,7 @@
         </div>
     </div>
 
-
-
     <script>
-        let timeout = null;
-
-        function debounceSearch() {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                document.getElementById('search-form').submit();
-            }, 500);
-        }
-
         function handleDelete(id) {
             if (confirm('Are you sure you want to remove this member? This action cannot be undone.')) {
                 document.getElementById('delete-' + id).submit();

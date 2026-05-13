@@ -22,17 +22,17 @@
     <div class="row g-4">
         {{-- Main Detail Card --}}
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm animate__animated animate__fadeInLeft">
-                <div class="card-header border-0 py-4 px-4">
+            <div class="card border-0 shadow-sm rounded-4 animate__animated animate__fadeInLeft">
+                <div class="card-header bg-white border-bottom py-4 px-4 rounded-top-4">
                     <div class="d-flex align-items-center">
-                        <div class="icon-box bg-soft-primary text-primary rounded-3 me-3" style="width: 45px; height: 45px;">
+                        <div class="icon-box bg-soft-primary text-primary rounded-3 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
                             <i class="fa-solid fa-shield-halved fs-5"></i>
                         </div>
                         <h5 class="mb-0 fw-bold">Permission Details</h5>
                     </div>
                 </div>
 
-                <div class="card-body p-4 pt-0">
+                <div class="card-body p-4">
                     <div class="mb-4">
                         <span class="d-block text-muted x-small fw-bold text-uppercase tracking-widest mb-2">Identification String</span>
                         <div class="d-flex align-items-center justify-content-between p-3 rounded-4 bg-light border border-dashed">
@@ -55,7 +55,7 @@
                             <div class="p-3 rounded-4 bg-light border border-dashed h-100">
                                 <span class="d-block text-muted x-small fw-bold text-uppercase tracking-widest mb-2">Guard Interface</span>
                                 <div class="fw-bold text-dark d-flex align-items-center">
-                                    <div class="icon-box bg-white shadow-xs rounded-circle me-2" style="width: 30px; height: 30px;">
+                                    <div class="icon-box bg-white shadow-xs rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                                         <i class="fa-solid fa-server x-small text-muted"></i>
                                     </div>
                                     {{ $permission->guard_name }}
@@ -66,7 +66,7 @@
                             <div class="p-3 rounded-4 bg-light border border-dashed h-100">
                                 <span class="d-block text-muted x-small fw-bold text-uppercase tracking-widest mb-2">Initialized On</span>
                                 <div class="fw-bold text-dark d-flex align-items-center">
-                                    <div class="icon-box bg-white shadow-xs rounded-circle me-2" style="width: 30px; height: 30px;">
+                                    <div class="icon-box bg-white shadow-xs rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                                         <i class="fa-regular fa-calendar x-small text-muted"></i>
                                     </div>
                                     {{ $permission->created_at->format('M d, Y') }}
@@ -76,12 +76,12 @@
                     </div>
                 </div>
 
-                <div class="card-footer border-0 p-4 bg-light bg-opacity-50">
+                <div class="card-footer border-0 p-4 bg-light bg-opacity-50 rounded-bottom-4">
                     <div class="d-flex flex-column flex-sm-row gap-3">
                         {{-- Policy Check: Update Permission --}}
                         @can('update', $permission)
                             <a href="{{ route('permissions.edit', $permission->id) }}"
-                                class="btn btn-premium rounded-pill px-5 py-2 shadow-sm">
+                                class="btn btn-premium rounded-pill px-5 py-2 shadow-sm fw-bold">
                                 <i class="fa-solid fa-sliders me-2"></i> Edit Configuration
                             </a>
                         @endcan
@@ -104,9 +104,9 @@
 
         {{-- Side Note Column --}}
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm bg-primary text-white p-4 mb-4 animate__animated animate__fadeInRight">
+            <div class="card border-0 shadow-sm rounded-4 bg-primary text-white p-4 mb-4 animate__animated animate__fadeInRight">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="icon-box bg-white bg-opacity-20 rounded-3 me-2" style="width: 35px; height: 35px;">
+                    <div class="icon-box bg-white bg-opacity-20 rounded-3 me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
                         <i class="fa-solid fa-circle-info small"></i>
                     </div>
                     <h6 class="fw-bold mb-0 text-uppercase small tracking-widest">System Note</h6>
@@ -118,8 +118,8 @@
             </div>
 
             {{-- Optional: Linked Roles visualization --}}
-            <div class="card border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                <div class="card-header border-0 py-3 px-4">
+            <div class="card border-0 shadow-sm rounded-4 animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                <div class="card-header bg-white border-0 py-3 px-4 rounded-top-4">
                     <h6 class="fw-bold mb-0 small text-uppercase text-muted tracking-widest">Registry Linkage</h6>
                 </div>
                 <div class="card-body pt-0 px-4 pb-4 text-center py-4">
@@ -147,8 +147,8 @@
                 confirmButtonColor: '#ef4444',
                 confirmButtonText: 'Yes, purge it',
                 customClass: {
-                    confirmButton: 'btn btn-danger rounded-pill px-4',
-                    cancelButton: 'btn btn-light border rounded-pill px-4 ms-2'
+                    confirmButton: 'btn btn-danger rounded-pill px-4 fw-bold',
+                    cancelButton: 'btn btn-light border rounded-pill px-4 ms-2 fw-bold'
                 },
                 buttonsStyling: false
             }).then((result) => {

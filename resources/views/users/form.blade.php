@@ -14,7 +14,7 @@
                 </ol>
             </nav>
         </div>
-        <a href="{{ route('users.index') }}" class="btn btn-light border shadow-sm rounded-pill px-4">
+        <a href="{{ route('users.index') }}" class="btn btn-light border shadow-sm rounded-pill px-4 fw-bold">
             <i class="fa-solid fa-xmark me-2"></i>Cancel
         </a>
     </div>
@@ -31,7 +31,7 @@
         <div class="row g-4">
             {{-- Left Column: Avatar & Status --}}
             <div class="col-xl-3 col-lg-4">
-                <div class="card mb-4">
+                <div class="card mb-4 border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 text-center">
                         <div class="mb-4">
                             <h6 class="text-uppercase text-muted fw-bold small tracking-widest mb-3">Profile Image</h6>
@@ -41,10 +41,11 @@
                                 <div class="avatar-preview shadow-sm mx-auto mb-3 rounded-circle overflow-hidden position-relative border" 
                                      style="width: 120px; height: 120px; transition: var(--transition-bounce);">
                                     
-                                    {{-- 1. Placeholder --}}
+                                    {{-- 1. Placeholder (BRANDED: Deep Blue & Vivid Orange) --}}
                                     <div id="placeholderPreview"
-                                        class="bg-soft-primary d-flex align-items-center justify-content-center w-100 h-100 {{ isset($user) && $user->avatar ? 'd-none' : '' }}">
-                                        <i class="fa-solid fa-user text-primary" style="font-size: 3rem;"></i>
+                                        class="d-flex align-items-center justify-content-center w-100 h-100 {{ isset($user) && $user->avatar ? 'd-none' : '' }}"
+                                        style="background-color: #214497;">
+                                        <i class="fa-solid fa-user" style="font-size: 3rem; color: #FFA500;"></i>
                                     </div>
 
                                     {{-- 2. Actual Image --}}
@@ -59,11 +60,14 @@
                                        class="btn btn-premium rounded-circle position-absolute bottom-0 end-0 mb-1 me-1 shadow-sm z-3"
                                        style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;">
                                     <i class="fa-solid fa-camera small text-white"></i>
-                                    <input type="file" name="avatar" id="avatarUpload" class="d-none" accept="image/*">
+                                    <input type="file" name="avatar" id="avatarUpload" class="d-none" accept="image/png, image/jpeg, image/jpg">
                                 </label>
                             </div>
                             
                             <p class="text-muted small mb-0 mt-2">High-res PNG or JPG preferred</p>
+                            @error('avatar')
+                                <div class="text-danger fw-bold small mt-2"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}</div>
+                            @enderror
                         </div>
 
                         <hr class="my-4 border-light">
@@ -72,7 +76,6 @@
                         <div class="text-start form-group mb-0">
                             <label class="form-label text-uppercase text-muted fw-bold small tracking-widest mb-3">Account Status</label>
                             
-                            {{-- Integrated your Premium Custom Switch Toggle --}}
                             <div class="d-flex align-items-center justify-content-between p-3 border rounded-3 bg-light">
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="fa-solid fa-power-off text-muted"></i>
@@ -84,7 +87,7 @@
                                 
                                 <label class="custom-switch mb-0">
                                     <input type="checkbox" name="status" value="1" 
-                                        {{ old('status', isset($user) ? $user->status : 1) == 1 ? 'checked' : '' }}>
+                                        {{ old('status', $user->status ?? 1) == 1 ? 'checked' : '' }}>
                                     <span class="switch-slider"></span>
                                 </label>
                             </div>
@@ -96,8 +99,8 @@
 
             {{-- Right Column: User Details --}}
             <div class="col-xl-9 col-lg-8">
-                <div class="card">
-                    <div class="card-header border-0 py-4 px-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header border-0 py-4 px-4 bg-white rounded-top-4">
                         <h5 class="fw-bold mb-0">User Identity</h5>
                         <p class="text-muted small mb-0">Fill in the details below to {{ isset($user) ? 'update' : 'register' }} an account.</p>
                     </div>
@@ -106,38 +109,58 @@
                             
                             {{-- Name --}}
                             <div class="col-md-6 form-group mb-0">
-                                <label class="form-label">Full Name</label>
+                                <label class="form-label fw-bold text-dark">Full Name <span class="text-danger">*</span></label>
                                 <input type="text" name="name" 
-                                    value="{{ old('name', optional($user ?? null)->name) }}"
-                                    class="form-control pro-input" placeholder="Enter first and last name">
-                                @error('name') <span class="text-danger x-small mt-1 d-block">{{ $message }}</span> @enderror
+                                    value="{{ old('name', $user->name ?? '') }}"
+                                    class="form-control pro-input @error('name') is-invalid @enderror" 
+                                    placeholder="Enter first and last name" required>
+                                @error('name') 
+                                    <div class="invalid-feedback fw-bold small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                    </div> 
+                                @enderror
                             </div>
                             
                             {{-- Email --}}
                             <div class="col-md-6 form-group mb-0">
-                                <label class="form-label">Email Address</label>
+                                <label class="form-label fw-bold text-dark">Email Address <span class="text-danger">*</span></label>
                                 <input type="email" name="email" 
-                                    value="{{ old('email', optional($user ?? null)->email) }}"
-                                    class="form-control pro-input" placeholder="username@domain.com">
-                                @error('email') <span class="text-danger x-small mt-1 d-block">{{ $message }}</span> @enderror
+                                    value="{{ old('email', $user->email ?? '') }}"
+                                    class="form-control pro-input @error('email') is-invalid @enderror" 
+                                    placeholder="username@domain.com" required>
+                                @error('email') 
+                                    <div class="invalid-feedback fw-bold small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                    </div> 
+                                @enderror
                             </div>
 
                             {{-- Phone --}}
                             <div class="col-md-6 form-group mb-0">
-                                <label class="form-label">Phone Number</label>
+                                <label class="form-label fw-bold text-dark">Phone Number</label>
                                 <input type="text" name="phone" 
-                                    value="{{ old('phone', optional($user ?? null)->phone) }}"
-                                    class="form-control pro-input" placeholder="e.g., +1 555-0123">
-                                @error('phone') <span class="text-danger x-small mt-1 d-block">{{ $message }}</span> @enderror
+                                    value="{{ old('phone', $user->phone ?? '') }}"
+                                    class="form-control pro-input @error('phone') is-invalid @enderror" 
+                                    placeholder="e.g., +1 555-0123">
+                                @error('phone') 
+                                    <div class="invalid-feedback fw-bold small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                    </div> 
+                                @enderror
                             </div>
                             
                             {{-- Address --}}
                             <div class="col-md-6 form-group mb-0">
-                                <label class="form-label">Mailing Address</label>
+                                <label class="form-label fw-bold text-dark">Mailing Address</label>
                                 <input type="text" name="address" 
-                                    value="{{ old('address', optional($user ?? null)->address) }}"
-                                    class="form-control pro-input" placeholder="Street, City, Postcode">
-                                @error('address') <span class="text-danger x-small mt-1 d-block">{{ $message }}</span> @enderror
+                                    value="{{ old('address', $user->address ?? '') }}"
+                                    class="form-control pro-input @error('address') is-invalid @enderror" 
+                                    placeholder="Street, City, Postcode">
+                                @error('address') 
+                                    <div class="invalid-feedback fw-bold small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                    </div> 
+                                @enderror
                             </div>
 
                             {{-- Security Section --}}
@@ -150,17 +173,23 @@
                                 </div>
                                 <div class="row g-3 p-3 rounded-4 border bg-light">
                                     <div class="col-md-6 form-group mb-0">
-                                        <label class="form-label">{{ isset($user) ? 'Change Password' : 'Password' }}</label>
-                                        <input type="password" name="password" class="form-control pro-input"
+                                        <label class="form-label fw-bold text-dark">{{ isset($user) ? 'Change Password' : 'Password' }} {!! !isset($user) ? '<span class="text-danger">*</span>' : '' !!}</label>
+                                        <input type="password" name="password" 
+                                            class="form-control pro-input @error('password') is-invalid @enderror"
                                             placeholder="{{ isset($user) ? 'Leave empty to keep current' : 'Min. 8 characters' }}"
-                                            autocomplete="new-password">
-                                        @error('password') <span class="text-danger x-small mt-1 d-block">{{ $message }}</span> @enderror
+                                            autocomplete="new-password" {{ !isset($user) ? 'required' : '' }}>
+                                        @error('password') 
+                                            <div class="invalid-feedback fw-bold small mt-1">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                            </div> 
+                                        @enderror
                                     </div>
                                     <div class="col-md-6 form-group mb-0">
-                                        <label class="form-label">Confirm Password</label>
+                                        <label class="form-label fw-bold text-dark">Confirm Password {!! !isset($user) ? '<span class="text-danger">*</span>' : '' !!}</label>
                                         <input type="password" name="password_confirmation"
-                                            class="form-control pro-input" placeholder="Re-type password"
-                                            autocomplete="new-password">
+                                            class="form-control pro-input" 
+                                            placeholder="Re-type password"
+                                            autocomplete="new-password" {{ !isset($user) ? 'required' : '' }}>
                                     </div>
                                 </div>
                             </div>
@@ -175,16 +204,22 @@
                                     <h6 class="fw-bold mb-0">Access Permissions</h6>
                                 </div>
                                 
-                                <select name="roles[]" class="form-select pro-input" multiple size="3" style="min-height: 120px;">
+                                <select name="roles[]" class="form-select pro-input @error('roles') is-invalid @enderror" multiple size="3" style="min-height: 120px;">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role }}" class="py-2 px-3 border-bottom"
-                                            {{ in_array($role, old('roles', isset($userRole) ? $userRole : [])) ? 'selected' : '' }}>
+                                            {{ in_array($role, old('roles', $userRole ?? [])) ? 'selected' : '' }}>
                                             {{ $role }}
                                         </option>
                                     @endforeach
                                 </select>
+                                
+                                @error('roles') 
+                                    <div class="invalid-feedback fw-bold small mt-1">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                    </div> 
+                                @enderror
+                                
                                 <div class="mt-2 text-muted small"><i class="fa-solid fa-circle-info me-1 text-primary"></i> Hold CTRL (Windows) or CMD (Mac) to select multiple roles.</div>
-                                @error('roles') <span class="text-danger x-small mt-1 d-block">{{ $message }}</span> @enderror
                             </div>
                             @endcan
                             

@@ -34,28 +34,33 @@
         @endif
 
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="card-header border-0 py-4 px-4">
+            <div class="card-header bg-white border-bottom py-4 px-4 rounded-top-4">
                 <h5 class="fw-bold mb-0">Security Node Parameters</h5>
                 <p class="text-muted small mb-0">Configure the unique identifier and functional intent for this system capability.</p>
             </div>
 
-            <div class="card-body p-4 pt-0">
+            <div class="card-body p-4 pt-4">
                 <div class="row g-4">
+                    
                     {{-- Name Input --}}
                     <div class="col-md-12 form-group mb-0">
-                        <label class="form-label text-uppercase tracking-widest fw-bold small">Permission String (Slug)</label>
+                        <label class="form-label text-uppercase tracking-widest fw-bold small text-dark">Permission String (Slug) <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted px-3" style="border-radius: 0.5rem 0 0 0.5rem;">
+                            <span class="input-group-text bg-light border-end-0 text-muted px-3">
                                 <i class="fa-solid fa-key"></i>
                             </span>
                             <input type="text" name="name" 
                                 value="{{ old('name', $permission->name ?? '') }}" 
                                 class="form-control pro-input border-start-0 @error('name') is-invalid @enderror" 
                                 placeholder="e.g., user-edit" required>
+                            
+                            {{-- UI FIX: Standardized Validation Feedback --}}
+                            @error('name')
+                                <div class="invalid-feedback fw-bold small mt-1 d-block">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                        @error('name')
-                            <div class="text-danger x-small fw-bold mt-2"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}</div>
-                        @enderror
                         <div class="mt-2 text-muted x-small d-flex align-items-center">
                             <i class="fa-solid fa-circle-info me-1 text-primary"></i> Use kebab-case (e.g., <code class="text-primary">module-action</code>) for system compatibility.
                         </div>
@@ -63,28 +68,32 @@
 
                     {{-- Description Input --}}
                     <div class="col-md-12 form-group mb-0">
-                        <label class="form-label text-uppercase tracking-widest fw-bold small">Operational Description</label>
+                        <label class="form-label text-uppercase tracking-widest fw-bold small text-dark">Operational Description</label>
                         <textarea name="description" rows="3" 
                             class="form-control pro-input @error('description') is-invalid @enderror" 
                             placeholder="Briefly explain what actions this permission node authorizes...">{{ old('description', $permission->description ?? '') }}</textarea>
                         
+                        {{-- UI FIX: Standardized Validation Feedback --}}
                         @error('description')
-                            <div class="text-danger x-small fw-bold mt-2"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}</div>
+                            <div class="invalid-feedback fw-bold small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                            </div>
                         @enderror
                         
                         <div class="mt-2 text-muted x-small d-flex align-items-center">
                             <i class="fa-solid fa-circle-info me-1 text-primary"></i> Detailed descriptions improve administrative transparency within the security registry.
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
 
         {{-- Submit Button --}}
         <div class="mt-4 text-end">
-            <button type="submit" class="btn btn-premium rounded-pill px-5 py-3 shadow-sm">
+            <button type="submit" class="btn btn-premium rounded-pill px-5 py-3 shadow-sm fw-bold">
                 <i class="fa-solid fa-floppy-disk me-2"></i> 
-                <span class="fw-bold">{{ isset($permission) ? 'Recalibrate Node' : 'Initialize Node' }}</span>
+                {{ isset($permission) ? 'Recalibrate Node' : 'Initialize Node' }}
             </button>
         </div>
     </form>

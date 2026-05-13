@@ -21,8 +21,9 @@
                 <form action="{{ route('permissions.index') }}" method="GET" id="search-form"
                     class="search-capsule d-flex align-items-center">
                     <i class="fa-solid fa-magnifying-glass ms-3 text-muted"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search nodes..."
-                        class="form-control border-0 bg-transparent shadow-none" oninput="debounceSearch()"
+                    {{-- UX FIX: Removed oninput debounce to prevent focus loss mid-typing --}}
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search nodes... (Press Enter)"
+                        class="form-control border-0 bg-transparent shadow-none"
                         autocomplete="off">
                 </form>
 
@@ -142,23 +143,12 @@
         </div>
     </div>
 
-    {{-- Script to handle Delete & Search --}}
+    {{-- Script to handle Delete --}}
     <script>
-        let timeout = null;
-
-        function debounceSearch() {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                document.getElementById('search-form').submit();
-            }, 500);
-        }
-
         function handlePurge(id) {
             if (confirm('Are you sure you want to purge this security node? This action is irreversible.')) {
                 document.getElementById('purge-' + id).submit();
             }
         }
     </script>
-
- 
 @endsection

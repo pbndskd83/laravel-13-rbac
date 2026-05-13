@@ -18,18 +18,19 @@ class StoreUserRequest extends FormRequest
             'email'    => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', 'min:8'],
 
-            // FIX 1: Add these so they pass through $request->validated()
+            // Ensure these pass through $request->validated()
             'phone'    => ['nullable', 'string', 'max:20'],
             'address'  => ['nullable', 'string', 'max:255'],
 
-            'avatar'   => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            // Standardized avatar validation
+            'avatar'   => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
             'status'   => ['required', 'boolean'],
 
-            // FIX 2: Change 'required' to 'sometimes'.
-            // In your View, the roles dropdown is wrapped in @can(). 
-            // If the user creating the account cannot see that dropdown, 
-            // this field won't be sent, and validation would fail if strictly 'required'.
+            // Sometimes used (e.g., hidden behind @can authorization in UI)
             'roles'    => ['sometimes', 'array'],
+            
+            // Prevent Database Injection: Verify the roles exist in the database
+            'roles.*'  => ['exists:roles,name'],
         ];
     }
 }

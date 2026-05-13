@@ -35,25 +35,28 @@ class UserController extends Controller
         
         $roles = Role::pluck('name', 'name')->all();
         
-        // CORRECTION: Point to 'users.form' and pass null user
         return view('users.form', [
-            'roles' => $roles,
-            'user' => null,     // Tells the form we are creating
+            'roles'    => $roles,
+            'user'     => null, // Tells the form we are creating
             'userRole' => []    // Empty roles for create mode
         ]);
     }
 
-   public function store(StoreUserRequest $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         $this->authorize('create', User::class);
 
-        // Get validated data (now includes phone and address)
         $data = $request->validated();
+        $superAdminRole = config('rbac.super_admin');
 
-        // Optional: If roles were hidden in the UI and not sent, set a default role here.
-        // if (!isset($data['roles'])) {
-        //     $data['roles'] = ['User']; // Default role name
-        // }
+        // SECURITY FIX: Prevent Privilege Escalation
+        // Ensure that a user without Super Admin privileges cannot inject the 
+        // Super Admin role into the request array to escalate a new user's permissions.
+        if (isset($data['roles']) && in_array($superAdminRole, $data['roles'])) {
+            if (!$request->user()->hasRole($superAdminRole)) {
+                abort(403, 'UNAUTHORIZED TO ASSIGN SUPER ADMIN ROLE');
+            }
+        }
 
         $this->userService->createUser($data);
 
@@ -76,7 +79,6 @@ class UserController extends Controller
         // Get simple array of role names for the form
         $userRole = $user->roles->pluck('name')->toArray();
 
-        // CORRECTION: Point to 'users.form'
         return view('users.form', compact('user', 'roles', 'userRole'));
     }
 
@@ -84,18 +86,26 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        // Get validated data
         $data = $request->validated();
+        $superAdminRole = config('rbac.super_admin');
 
-        // FIX: Remove password from the array if it is null or empty
-        // This prevents overwriting the existing hash with a blank string
+        // SECURITY FIX: Prevent Privilege Escalation
+        // Ensure non-Super-Admins cannot maliciously edit an existing user 
+        // and assign them the Super Admin role.
+        if (isset($data['roles']) && in_array($superAdminRole, $data['roles'])) {
+            if (!$request->user()->hasRole($superAdminRole)) {
+                abort(403, 'UNAUTHORIZED TO ASSIGN SUPER ADMIN ROLE');
+            }
+        }
+
+        // LOGIC FIX: Prevent overwriting password with blank input
+        // If the password field is sent but empty, unset it so the Service/Eloquent 
+        // does not replace the existing hashed password with an empty string.
         if (empty($data['password'])) {
             unset($data['password']);
         }
 
         // If roles are missing (e.g., hidden by permissions), preserve existing roles
-        // depending on how your UserService handles missing keys. 
-        // If your Service overwrites roles, you might need to unset it here too if not present.
         if (!$request->has('roles')) {
             unset($data['roles']); 
         }

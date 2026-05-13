@@ -19,24 +19,27 @@ class UpdateUserRequest extends FormRequest
         $userId = $user ? $user->id : null;
 
         return [
-            'name'    => ['required', 'string', 'max:255'],
-            'email'   => ['required', 'email', Rule::unique('users', 'email')->ignore($userId)],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', Rule::unique('users', 'email')->ignore($userId)],
             
-            // FIX 1: Add these fields so they are included in validated()
-            'phone'   => ['nullable', 'string', 'max:20'], 
-            'address' => ['nullable', 'string', 'max:255'],
+            // Ensure fields are included in validated()
+            'phone'    => ['nullable', 'string', 'max:20'], 
+            'address'  => ['nullable', 'string', 'max:255'],
             
-            'avatar'  => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'status'  => ['required', 'boolean'],
+            // Standardized avatar validation
+            'avatar'   => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
+            'status'   => ['required', 'boolean'],
             
-            // FIX 2: Change 'required' to 'sometimes' or 'nullable'. 
-            // If the user can't see the roles dropdown (due to @can), this field won't be sent, 
-            // causing validation to fail with "required".
-            'roles'   => ['sometimes', 'array'], 
+            // Sometimes used (e.g., hidden behind @can authorization in UI)
+            'roles'    => ['sometimes', 'array'], 
             
-            // FIX 3: Simplify password logic. Validate it as nullable here, 
-            // and handle the empty check in the Controller/Service.
-            'password'=> ['nullable', 'confirmed', 'min:8'],
+            // Prevent Database Injection: Verify the roles exist in the database
+            'roles.*'  => ['exists:roles,name'],
+            
+            // Logic: Validate password as nullable so an empty input does not overwrite 
+            // the user's current password. The Controller/Service should handle skipping
+            // the password update if the field is empty.
+            'password' => ['nullable', 'confirmed', 'min:8'],
         ];
     }
 }

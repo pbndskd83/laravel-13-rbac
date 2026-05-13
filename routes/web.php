@@ -9,23 +9,14 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\SettingController; 
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
-/*Route::get('/debug-role', function() {
-    $user = auth()->user();
-    return [
-        'User Name' => $user->name,
-        'User Email' => $user->email,
-        'Has Super Admin Role?' => $user->hasRole('Super Admin'), // Check hardcoded string
-        'Config Role Name' => config('rbac.super_admin'),         // Check config value
-        'Has Config Role?' => $user->hasRole(config('rbac.super_admin')),
-        'Permissions' => $user->getAllPermissions()->pluck('name'),
-    ];
-});*/
+
 // -----------------------------------------------------------------------------
 // 1. Public Routes
 // -----------------------------------------------------------------------------
@@ -33,40 +24,75 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Authentication Routes (Login, Register, Verify, Reset Password)
+// Laravel UI / Breeze / Jetstream Auth Routes
 Auth::routes();
 
 // -----------------------------------------------------------------------------
-// 2. Protected Routes (Requires Login)
+// 2. Protected Routes (Requires Authentication)
 // -----------------------------------------------------------------------------
 Route::middleware(['auth'])->group(function () {
 
-    // --- Dashboard ---
+    /**
+     * Dashboard / Home
+     */
     Route::get('/home', [HomeController::class, 'index'])->name('dashboard');
 
-    // --- User Profile (Self-Management) ---
-    // Grouping these makes the code cleaner and easier to maintain
-Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
-    
-    // URL: /profile  |  Name: profile.show
-    Route::get('/', 'show')->name('show');
-    
-    // URL: /profile/edit  |  Name: profile.edit
-    Route::get('/edit', 'edit')->name('edit');
-    
-    // URL: /profile  |  Name: profile.update
-    Route::patch('/', 'update')->name('update');
-    
-    // URL: /profile/password  |  Name: profile.password.update
-    Route::put('/password', 'updatePassword')->name('password.update');
-    
+    /**
+     * User Profile Self-Management
+     * Prefixed with /profile | Named profile.*
+     */
+    Route::controller(ProfileController::class)
+        ->prefix('profile')
+        ->name('profile.')
+        ->group(function () {
+            Route::get('/', 'show')->name('show');
+            Route::get('/edit', 'edit')->name('edit');
+            Route::patch('/', 'update')->name('update');
+            Route::put('/password', 'updatePassword')->name('password.update');
+        });
+
+    /**
+     * Administrative & RBAC Management
+     * Prefixed with /admin | Handled by Policies in Controllers
+     */
+    Route::prefix('admin')->group(function () {
+        
+        // Settings Management (Requires specific 'manage-settings' permission/gate)
+        Route::middleware(['can:manage-settings'])->group(function () {
+            
+            Route::get('/settings', [SettingController::class, 'edit'])->name('admin.settings.edit');
+            Route::patch('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+            
+            // Global Reset
+            Route::delete('/settings/reset', [SettingController::class, 'reset'])->name('admin.settings.reset');
+            
+            // Section-wise Reset
+            Route::delete('/settings/reset/{section}', [SettingController::class, 'resetSection'])->name('admin.settings.reset.section');
+        });
+
+        // Resourceful Routes for RBAC
+        Route::resources([
+            'permissions' => PermissionController::class,
+            'roles'       => RoleController::class,
+            'users'       => UserController::class,
+        ]);
+        
+    }); // <-- Correctly placed closing brace for the 'admin' prefix group
 });
 
-    // --- Administrative & RBAC Management ---
-    // Policies in the controllers handle the authorization (e.g., who can edit users)
-    Route::resources([
-        'permissions' => PermissionController::class,
-        'roles'       => RoleController::class,
-        'users'       => UserController::class,
-    ]);
-});
+/*
+|--------------------------------------------------------------------------
+| Diagnostics / Debug
+|--------------------------------------------------------------------------
+| Uncomment this route to verify Spatie RBAC cache and configs.
+|--------------------------------------------------------------------------
+*/
+// Route::get('/debug-role', function() {
+//     $user = auth()->user();
+//     return [
+//         'User Name'             => $user->name,
+//         'Config Role Name'      => config('rbac.super_admin'),
+//         'Has Config Role?'      => $user->hasRole(config('rbac.super_admin')),
+//         'Permissions'           => $user->getAllPermissions()->pluck('name'),
+//     ];
+// });

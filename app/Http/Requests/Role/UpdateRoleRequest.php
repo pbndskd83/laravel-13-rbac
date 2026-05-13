@@ -17,9 +17,12 @@ class UpdateRoleRequest extends FormRequest
         $roleId = $this->route('role')->id;
 
         return [
-            'name'        => ['required', 'max:255', Rule::unique('roles', 'name')->ignore($roleId)],
-            'description' => ['nullable', 'string', 'max:255'],
-            'permission'  => ['nullable', 'array'],
+            'name'         => ['required', 'max:255', Rule::unique('roles', 'name')->ignore($roleId)],
+            'description'  => ['nullable', 'string', 'max:255'],
+            'permission'   => ['nullable', 'array'],
+            
+            // Prevent Database Injection: Verify the permission IDs exist
+            'permission.*' => ['exists:permissions,id'],
         ];
     }
 }

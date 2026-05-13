@@ -37,11 +37,12 @@
         {{-- LEFT COLUMN: Role Info --}}
         <div class="col-lg-4">
             {{-- Main Info Card --}}
-            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInLeft">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 animate__animated animate__fadeInLeft">
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
-                        <div class="bg-soft-primary text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" 
-                             style="width: 80px; height: 80px; transition: var(--transition-bounce);">
+                        {{-- UI FIX: Applied Brand Colors (Deep Blue & Vivid Orange) --}}
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm border" 
+                             style="width: 80px; height: 80px; background-color: #214497; color: #FFA500; transition: var(--transition-bounce);">
                             <i class="fa-solid fa-fingerprint fa-2x"></i>
                         </div>
                         <h5 class="fw-bold mb-1 text-dark">{{ $role->name }}</h5>
@@ -78,8 +79,8 @@
             </div>
             
             {{-- Metadata Card --}}
-            <div class="card border-0 shadow-sm animate__animated animate__fadeInUp">
-                <div class="card-header border-0 py-3">
+            <div class="card border-0 shadow-sm rounded-4 animate__animated animate__fadeInUp">
+                <div class="card-header bg-white border-0 py-3 rounded-top-4">
                     <h6 class="fw-bold mb-0 small text-uppercase text-muted tracking-widest">Role Metadata</h6>
                 </div>
                 <div class="card-body pt-0">
@@ -99,8 +100,8 @@
 
         {{-- RIGHT COLUMN: Permission Matrix --}}
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm animate__animated animate__fadeInRight">
-                <div class="card-header border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+            <div class="card border-0 shadow-sm rounded-4 animate__animated animate__fadeInRight">
+                <div class="card-header bg-white border-0 py-4 px-4 rounded-top-4 d-flex justify-content-between align-items-center">
                     <h6 class="fw-bold mb-0 small text-uppercase text-muted tracking-widest">Permission Matrix</h6>
                     <span class="badge bg-light text-muted border px-3 py-2 rounded-pill x-small">
                         {{ $rolePermissions->count() }} Total Capabilities

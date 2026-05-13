@@ -29,18 +29,18 @@ class RoleController extends Controller
         return view('roles.index', compact('roles'));
     }
 
-   public function create()
-{
-    $this->authorize('create', Role::class);
-    
-    $permissions = Permission::all();
-    
-    return view('roles.form', [
-        'role' => null,
-        'permissions' => $permissions,
-        'rolePermissions' => [] // Empty array for create
-    ]);
-}
+    public function create()
+    {
+        $this->authorize('create', Role::class);
+        
+        $permissions = Permission::all();
+        
+        return view('roles.form', [
+            'role'            => null,
+            'permissions'     => $permissions,
+            'rolePermissions' => [] // Empty array for create
+        ]);
+    }
 
     public function store(StoreRoleRequest $request): RedirectResponse
     {
@@ -61,30 +61,38 @@ class RoleController extends Controller
         $role->load('permissions');
 
         return view('roles.show', [
-            'role' => $role,
+            'role'            => $role,
             'rolePermissions' => $role->permissions
         ]);
     }
 
-   public function edit(Role $role)
-{
-    $this->authorize('update', $role);
+    public function edit(Role $role)
+    {
+        $this->authorize('update', $role);
 
-    if($role->name == 'Super Admin'){
-        abort(403, 'SUPER ADMIN CANNOT BE EDITED');
+        // STANDARD FIX: Avoid hardcoded role names and use config variable
+        if ($role->name === config('rbac.super_admin')) {
+            abort(403, 'SUPER ADMIN ROLE CANNOT BE EDITED');
+        }
+
+        $permissions = Permission::all();
+        
+        // Get array of permission IDs associated with this role
+        $rolePermissions = $role->permissions->pluck('id'); 
+
+        return view('roles.form', compact('role', 'permissions', 'rolePermissions'));
     }
-
-    $permissions = Permission::all();
-    
-    // Get array of permission IDs associated with this role
-    $rolePermissions = $role->permissions->pluck('id'); 
-
-    return view('roles.form', compact('role', 'permissions', 'rolePermissions'));
-}
 
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         $this->authorize('update', $role);
+
+        // SECURITY FIX: Protect the Root Role
+        // Prevent bypassing the edit view to forcibly rename or strip permissions 
+        // from the Super Admin via direct POST/PUT request.
+        if ($role->name === config('rbac.super_admin')) {
+            abort(403, 'SUPER ADMIN ROLE CANNOT BE MODIFIED');
+        }
 
         $this->roleService->updateRole($role, $request->validated());
 

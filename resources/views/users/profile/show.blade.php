@@ -25,11 +25,11 @@
 
         <div class="action-stack d-flex gap-2 mt-3 mt-md-0">
             @if(auth()->id() === $user->id)
-                <a href="{{ route('profile.edit') }}" class="btn btn-premium rounded-pill shadow-sm px-4">
+                <a href="{{ route('profile.edit') }}" class="btn btn-premium rounded-pill shadow-sm px-4 fw-bold">
                     <i class="fa-solid fa-pen-to-square me-2"></i>Edit Profile
                 </a>
             @else
-                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-premium rounded-pill shadow-sm px-4">
+                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-premium rounded-pill shadow-sm px-4 fw-bold">
                     <i class="fa-solid fa-pen-to-square me-2"></i>Edit User
                 </a>
             @endif
@@ -38,7 +38,7 @@
 
     {{-- Success/Error Alerts --}}
     @if (session('success'))
-        <div class="alert bg-soft-success text-success border-0 shadow-sm mb-4 d-flex align-items-center animate__animated animate__headShake">
+        <div class="alert bg-soft-success text-success border-0 shadow-sm mb-4 d-flex align-items-center animate__animated animate__headShake rounded-4 p-3">
             <i class="fa-solid fa-circle-check fs-4 me-3"></i>
             <div>
                 <h6 class="fw-bold mb-0">Updated Successfully</h6>
@@ -51,7 +51,7 @@
     {{-- 2. STATS ROW --}}
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card p-3 h-100 animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+            <div class="card p-3 h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <p class="text-muted x-small fw-bold text-uppercase mb-1 tracking-widest">Account Created</p>
@@ -62,7 +62,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card p-3 h-100 animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+            <div class="card p-3 h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <p class="text-muted x-small fw-bold text-uppercase mb-1 tracking-widest">Verified Email</p>
@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card p-3 h-100 animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+            <div class="card p-3 h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <p class="text-muted x-small fw-bold text-uppercase mb-1 tracking-widest">Permissions</p>
@@ -86,7 +86,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card p-3 h-100 bg-primary animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+            <div class="card p-3 h-100 bg-primary border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <p class="x-small fw-bold text-uppercase mb-1 opacity-75 text-white tracking-widest">Assigned Roles</p>
@@ -101,18 +101,25 @@
     <div class="row g-4">
         {{-- 3. LEFT COLUMN --}}
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInLeft">
+            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInLeft rounded-4">
                 <div class="card-body p-4 text-center">
+                    
                     <div class="position-relative d-inline-block mb-3">
                         @if ($user->avatar)
                             <img src="{{ asset('storage/' . $user->avatar) }}" class="rounded-circle shadow-sm border p-1" style="width: 140px; height: 140px; object-fit: cover;">
                         @else
-                            <div class="bg-soft-primary text-primary fw-bold rounded-circle border shadow-sm mx-auto d-flex align-items-center justify-content-center" style="width: 140px; height: 140px; font-size: 3rem;">
+                            {{-- UI FIX: Deep Blue & Vivid Orange Brand Palette --}}
+                            <div class="fw-bold rounded-circle border shadow-sm mx-auto d-flex align-items-center justify-content-center" 
+                                 style="width: 140px; height: 140px; font-size: 3.5rem; background-color: #214497; color: #FFA500;">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                         @endif
-                        <div class="online-status {{ $user->status ? 'status-active' : 'status-inactive' }}" style="width: 24px; height: 24px; border-width: 4px;"></div>
+                        
+                        {{-- UI FIX: Bootstrap utilities for perfect positioning --}}
+                        <span class="position-absolute bottom-0 end-0 mb-2 me-2 p-2 border border-3 border-white rounded-circle {{ $user->status ? 'bg-success' : 'bg-secondary' }}" 
+                              title="{{ $user->status ? 'Active' : 'Inactive' }}"></span>
                     </div>
+                    
                     <h5 class="fw-bold mb-2 text-dark">{{ $user->name }}</h5>
                     <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
                         @forelse ($user->getRoleNames() as $role)
@@ -124,25 +131,43 @@
 
                     <div class="text-start mt-4">
                         <h6 class="fw-bold small mb-3 text-uppercase text-muted tracking-widest border-bottom pb-2">Contact Information</h6>
-                        <div class="mb-3">
-                            <label class="text-muted d-block x-small fw-bold text-uppercase">Email Address</label>
-                            <span class="text-dark fw-bold small">{{ $user->email }}</span>
+                        
+                        <div class="mb-3 d-flex align-items-center gap-3">
+                            <div class="icon-box bg-light rounded-circle text-muted d-flex align-items-center justify-content-center" style="width:35px; height:35px;">
+                                <i class="fa-solid fa-envelope small"></i>
+                            </div>
+                            <div>
+                                <label class="text-muted d-block x-small fw-bold text-uppercase">Email Address</label>
+                                <span class="text-dark fw-bold small">{{ $user->email }}</span>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="text-muted d-block x-small fw-bold text-uppercase">Phone Number</label>
-                            <span class="text-dark fw-bold small">{{ $user->phone ?? 'Not Provided' }}</span>
+                        
+                        <div class="mb-3 d-flex align-items-center gap-3">
+                            <div class="icon-box bg-light rounded-circle text-muted d-flex align-items-center justify-content-center" style="width:35px; height:35px;">
+                                <i class="fa-solid fa-phone small"></i>
+                            </div>
+                            <div>
+                                <label class="text-muted d-block x-small fw-bold text-uppercase">Phone Number</label>
+                                <span class="text-dark fw-bold small">{{ $user->phone ?? 'Not Provided' }}</span>
+                            </div>
                         </div>
-                        <div class="mb-0">
-                            <label class="text-muted d-block x-small fw-bold text-uppercase">Residential Address</label>
-                            <span class="text-dark fw-bold small">{{ $user->address ?? 'Not Set' }}</span>
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box bg-light rounded-circle text-muted d-flex align-items-center justify-content-center" style="width:35px; height:35px;">
+                                <i class="fa-solid fa-location-dot small"></i>
+                            </div>
+                            <div>
+                                <label class="text-muted d-block x-small fw-bold text-uppercase">Residential Address</label>
+                                <span class="text-dark fw-bold small">{{ $user->address ?? 'Not Set' }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {{-- Equipment Card --}}
-            <div class="card border-0 shadow-sm animate__animated animate__fadeInUp">
-                <div class="card-header border-0 py-3">
+            <div class="card border-0 shadow-sm animate__animated animate__fadeInUp rounded-4">
+                <div class="card-header bg-white border-0 py-3 rounded-top-4">
                     <h6 class="fw-bold mb-0 small text-uppercase text-muted tracking-widest">Assigned Equipment</h6>
                 </div>
                 <div class="card-body pt-0">
@@ -161,8 +186,8 @@
         <div class="col-lg-8">
             
             {{-- Permissions Matrix --}}
-            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInRight">
-                <div class="card-body">
+            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInRight rounded-4">
+                <div class="card-body p-4">
                     <h6 class="fw-bold mb-4 small text-uppercase text-muted tracking-widest">Security Access Matrix</h6>
                     <div class="d-flex flex-wrap gap-2">
                         @forelse ($user->getAllPermissions() as $permission)
@@ -179,8 +204,8 @@
 
             {{-- SECURITY SECTION (Only show for own profile) --}}
             @if(auth()->id() === $user->id)
-            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInRight" style="animation-delay: 0.1s">
-                <div class="card-header border-0 py-4 px-4">
+            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInRight rounded-4" style="animation-delay: 0.1s">
+                <div class="card-header bg-white border-0 py-4 px-4 rounded-top-4">
                     <h6 class="fw-bold mb-0 small text-uppercase text-muted tracking-widest">
                         <i class="fa-solid fa-shield-halved me-2 text-warning"></i>Security Architecture
                     </h6>
@@ -200,14 +225,16 @@
             @endif
             
             {{-- Recent Events --}}
-            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                <div class="card-header border-0 py-4 px-4">
+            <div class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInUp rounded-4" style="animation-delay: 0.2s">
+                <div class="card-header bg-white border-0 py-4 px-4 rounded-top-4">
                     <h6 class="fw-bold mb-0 small text-uppercase text-muted tracking-widest">Audit Timeline</h6>
                 </div>
                 <div class="card-body pt-0 px-4 pb-4">
                     <div class="d-flex flex-column gap-3">
                         <div class="d-flex align-items-start p-3 rounded-4 border border-dashed bg-light bg-opacity-50">
-                            <div class="bg-soft-primary text-primary icon-box rounded-circle me-3"><i class="fa-solid fa-circle-info small"></i></div>
+                            <div class="bg-soft-primary text-primary icon-box rounded-circle me-3 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                <i class="fa-solid fa-circle-info small"></i>
+                            </div>
                             <div>
                                 <p class="mb-0 small fw-bold text-dark">Account initialized in directory</p>
                                 <span class="x-small text-muted">{{ $user->created_at->format('M d, Y • h:i A') }}</span>
@@ -215,7 +242,9 @@
                         </div>
                         @if($user->updated_at != $user->created_at)
                         <div class="d-flex align-items-start p-3 rounded-4 border border-dashed bg-light bg-opacity-50">
-                            <div class="bg-soft-success text-success icon-box rounded-circle me-3"><i class="fa-solid fa-pen small"></i></div>
+                            <div class="bg-soft-success text-success icon-box rounded-circle me-3 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                <i class="fa-solid fa-pen small"></i>
+                            </div>
                             <div>
                                 <p class="mb-0 small fw-bold text-dark">Profile synchronization complete</p>
                                 <span class="x-small text-muted">{{ $user->updated_at->format('M d, Y • h:i A') }}</span>
@@ -243,22 +272,32 @@
             <form action="{{ route('profile.password.update') }}" method="POST">
                 @csrf @method('PUT')
                 <div class="modal-body p-4">
+                    
                     <div class="form-group mb-4">
-                        <label class="form-label text-uppercase text-muted x-small fw-bold tracking-widest">Current Credentials</label>
+                        <label class="form-label text-uppercase text-muted x-small fw-bold tracking-widest">Current Credentials <span class="text-danger">*</span></label>
                         <input type="password" name="current_password" class="form-control pro-input @error('current_password') is-invalid @enderror" placeholder="••••••••" required>
-                        @error('current_password')<span class="text-danger x-small fw-bold mt-1 d-block">{{ $message }}</span>@enderror
+                        @error('current_password')
+                            <div class="invalid-feedback fw-bold small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                            </div> 
+                        @enderror
                     </div>
 
                     <div class="form-group mb-4">
-                        <label class="form-label text-uppercase text-muted x-small fw-bold tracking-widest">New Password</label>
+                        <label class="form-label text-uppercase text-muted x-small fw-bold tracking-widest">New Password <span class="text-danger">*</span></label>
                         <input type="password" name="password" class="form-control pro-input @error('password') is-invalid @enderror" placeholder="Min. 8 characters" required>
-                        @error('password')<span class="text-danger x-small fw-bold mt-1 d-block">{{ $message }}</span>@enderror
+                        @error('password')
+                            <div class="invalid-feedback fw-bold small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i> {{ $message }}
+                            </div> 
+                        @enderror
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label text-uppercase text-muted x-small fw-bold tracking-widest">Verify Password</label>
+                        <label class="form-label text-uppercase text-muted x-small fw-bold tracking-widest">Verify Password <span class="text-danger">*</span></label>
                         <input type="password" name="password_confirmation" class="form-control pro-input" placeholder="Re-type new password" required>
                     </div>
+                    
                 </div>
 
                 <div class="modal-footer border-0 p-4 pt-0 d-flex gap-2">
@@ -269,5 +308,16 @@
         </div>
     </div>
 </div>
+
+{{-- Script to automatically reopen modal if validation fails --}}
+@if($errors->has('current_password') || $errors->has('password'))
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var myModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+        myModal.show();
+    });
+</script>
+@endif
+
 @endif
 @endsection

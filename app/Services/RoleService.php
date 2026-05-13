@@ -23,9 +23,9 @@ class RoleService
     public function createRole(array $data): Role
     {
         $role = Role::create([
-            'name' => $data['name'],
+            'name'        => $data['name'],
             'description' => $data['description'] ?? null,
-            'guard_name' => 'web'
+            'guard_name'  => 'web'
         ]);
 
         $permissions = [];
@@ -34,7 +34,7 @@ class RoleService
             $role->syncPermissions($permissions);
         }
 
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY
         activity()
             ->useLog('role-management')
             ->performedOn($role)
@@ -48,7 +48,7 @@ class RoleService
     public function updateRole(Role $role, array $data): Role
     {
         $role->update([
-            'name' => $data['name'],
+            'name'        => $data['name'],
             'description' => $data['description'] ?? null,
         ]);
 
@@ -58,7 +58,7 @@ class RoleService
             
         $role->syncPermissions($permissions);
 
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY
         activity()
             ->useLog('role-management')
             ->performedOn($role)
@@ -71,11 +71,12 @@ class RoleService
 
     public function deleteRole(Role $role): void
     {
+        // CONSISTENCY FIX: Protect the root system role using the config
         if ($role->name === config('rbac.super_admin')) {
             abort(403, 'CANNOT DELETE SUPER ADMIN ROLE');
         }
         
-        // ✅ LOG ACTIVITY
+        // LOG ACTIVITY
         activity()
             ->useLog('role-management')
             ->performedOn($role)
